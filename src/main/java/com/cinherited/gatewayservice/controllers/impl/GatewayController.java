@@ -33,31 +33,31 @@ public class GatewayController implements IGatewayController {
     @GetMapping("/contact/{id}")
     public ContactDTO getContact(@PathVariable Integer id){
        return contactClient.getContact(id);
-    };
+    }
 
     /** GET **/
     @GetMapping("/contact/")
     public List<ContactDTO> getAllContact(){
         return contactClient.getAllContact();
-    };
+    }
 
     /** POST **/
     @PostMapping("/new/contact/")
     public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO){
         return contactClient.postContact(contactDTO);
-    };
+    }
 
     /** PUT **/
     @PutMapping("contact/{id}")
     public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO){
         return contactClient.putContact(id, contactDTO);
-    };
+    }
 
     /** DELETE **/
     @DeleteMapping("contact/{id}")
     public void deleteContact(@PathVariable Integer id){
         contactClient.deleteContact(id);
-    };
+    }
 
 
 }
