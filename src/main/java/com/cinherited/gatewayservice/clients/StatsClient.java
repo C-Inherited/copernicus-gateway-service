@@ -25,38 +25,38 @@ public interface StatsClient {
 
     /** OPPORTUNITY STATS **/
     @GetMapping("/opportunity/count/by/product")
-    public List<Object[]> countOpportunitiesByProduct(Optional<String> status);
+    List<Object[]> countOpportunitiesByProduct(Optional<String> status);
 
     @GetMapping("/opportunity/count/by/city")
-    public List<Object[]> countOpportunitiesByCity(Optional<String> status);
+    List<Object[]> countOpportunitiesByCity(Optional<String> status);
 
     @GetMapping("/opportunity/count/by/country")
-    public List<Object[]> countOpportunitiesByCountry(Optional<String> status);
+    List<Object[]> countOpportunitiesByCountry(Optional<String> status);
 
     @GetMapping("/opportunity/count/by/industry")
-    public List<Object[]> countOpportunitiesByIndustry(Optional<String> status);
+    List<Object[]> countOpportunitiesByIndustry(Optional<String> status);
 
     @GetMapping("/opportunity/avg/by/account")
-    public Double avgOpportunitiesByAccount();
+    Double avgOpportunitiesByAccount();
 
     @GetMapping("/opportunity/max/by/account")
-    public Integer maxOpportunitiesByAccount();
+    Integer maxOpportunitiesByAccount();
 
     @GetMapping("/opportunity/min/by/account")
-    public Integer minOpportunitiesByAccount();
+    Integer minOpportunitiesByAccount();
 
     @GetMapping("/opportunity/median/by/account")
-    public Double medianOpportunitiesByAccount();
+    Double medianOpportunitiesByAccount();
 
     @GetMapping("/opportunity/avg/quantity/by/product")
-    public List<Object[]> avgQuantityByProduct();
+    List<Object[]> avgQuantityByProduct();
 
     @GetMapping("/opportunity/max/quantity/by/product")
-    public List<Object[]> maxQuantityByProduct();
+    List<Object[]> maxQuantityByProduct();
 
     @GetMapping("/opportunity/min/quantity/by/product")
-    public List<Object[]> minQuantityByProduct();
+    List<Object[]> minQuantityByProduct();
 
     @GetMapping("/opportunity/median/quantity/by/product")
-    public List<Object[]> medianQuantityByProduct();
+    List<Object[]> medianQuantityByProduct();
 }
