@@ -31,32 +31,32 @@ public class GatewayController implements IGatewayController {
     /** CONTACT **/
     /** GET **/
     @GetMapping("/contact/{id}")
-    public ContactDTO getContact(@PathVariable Integer id){
-       return contactClient.getContact(id);
+    public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader){
+       return contactClient.getContact(id, authorizationHeader);
     }
 
     /** GET **/
     @GetMapping("/contact/")
-    public List<ContactDTO> getAllContact(){
-        return contactClient.getAllContact();
+    public List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader){
+        return contactClient.getAllContact(authorizationHeader);
     }
 
     /** POST **/
     @PostMapping("/new/contact/")
-    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO){
-        return contactClient.postContact(contactDTO);
+    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader){
+        return contactClient.postContact(contactDTO, authorizationHeader);
     }
 
     /** PUT **/
-    @PutMapping("contact/{id}")
-    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO){
-        return contactClient.putContact(id, contactDTO);
+    @PutMapping("/contact/{id}")
+    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader){
+        return contactClient.putContact(id, contactDTO, authorizationHeader);
     }
 
     /** DELETE **/
-    @DeleteMapping("contact/{id}")
-    public void deleteContact(@PathVariable Integer id){
-        contactClient.deleteContact(id);
+    @DeleteMapping("/contact/{id}")
+    public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader){
+        contactClient.deleteContact(id, authorizationHeader);
     }
 
 

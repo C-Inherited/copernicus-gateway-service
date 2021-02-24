@@ -13,21 +13,21 @@ public interface ContactClient {
 
     /** GET **/
     @GetMapping("/contact/{id}")
-    public ContactDTO getContact(@PathVariable Integer id);
+    public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** GET **/
     @GetMapping("/contact/")
-    public List<ContactDTO> getAllContact();
+    public List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** POST **/
     @PostMapping("/new/contact/")
-    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO);
+    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** PUT **/
-    @PutMapping("contact/{id}")
-    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO);
+    @PutMapping("/contact/{id}")
+    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** DELETE **/
-    @DeleteMapping("contact/{id}")
-    public void deleteContact(@PathVariable Integer id);
+    @DeleteMapping("/contact/{id}")
+    public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
 }
