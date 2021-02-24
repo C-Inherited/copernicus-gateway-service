@@ -2,6 +2,7 @@ package com.cinherited.gatewayservice.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,52 +12,52 @@ public interface StatsClient {
 
     /** ACCOUNT STATS **/
     @GetMapping("/account/avg/employee-count")
-    Double avgEmployeeCount();
+    Double avgEmployeeCount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/account/max/employee-count")
-    Integer maxEmployeeCount();
+    Integer maxEmployeeCount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/account/min/employee-count")
-    Integer minEmployeeCount();
+    Integer minEmployeeCount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/account/median/employee-count")
-    Double medianEmployeeCount();
+    Double medianEmployeeCount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
 
     /** OPPORTUNITY STATS **/
     @GetMapping("/opportunity/count/by/product")
-    List<Object[]> countOpportunitiesByProduct(Optional<String> status);
+    List<Object[]> countOpportunitiesByProduct(Optional<String> status, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/count/by/city")
-    List<Object[]> countOpportunitiesByCity(Optional<String> status);
+    List<Object[]> countOpportunitiesByCity(Optional<String> status, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/count/by/country")
-    List<Object[]> countOpportunitiesByCountry(Optional<String> status);
+    List<Object[]> countOpportunitiesByCountry(Optional<String> status, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/count/by/industry")
-    List<Object[]> countOpportunitiesByIndustry(Optional<String> status);
+    List<Object[]> countOpportunitiesByIndustry(Optional<String> status, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/avg/by/account")
-    Double avgOpportunitiesByAccount();
+    Double avgOpportunitiesByAccount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/max/by/account")
-    Integer maxOpportunitiesByAccount();
+    Integer maxOpportunitiesByAccount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/min/by/account")
-    Integer minOpportunitiesByAccount();
+    Integer minOpportunitiesByAccount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/median/by/account")
-    Double medianOpportunitiesByAccount();
+    Double medianOpportunitiesByAccount(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/avg/quantity/by/product")
-    List<Object[]> avgQuantityByProduct();
+    List<Object[]> avgQuantityByProduct(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/max/quantity/by/product")
-    List<Object[]> maxQuantityByProduct();
+    List<Object[]> maxQuantityByProduct(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/min/quantity/by/product")
-    List<Object[]> minQuantityByProduct();
+    List<Object[]> minQuantityByProduct(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/opportunity/median/quantity/by/product")
-    List<Object[]> medianQuantityByProduct();
+    List<Object[]> medianQuantityByProduct(@RequestHeader(value = "Authorization") String authorizationHeader);
 }
