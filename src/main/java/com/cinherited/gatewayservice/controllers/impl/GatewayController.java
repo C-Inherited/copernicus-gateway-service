@@ -2,11 +2,9 @@ package com.cinherited.gatewayservice.controllers.impl;
 
 import com.cinherited.gatewayservice.clients.LeadClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IGatewayController;
-import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
-import com.cinherited.gatewayservice.dtos.AuthenticationResponse;
-import com.cinherited.gatewayservice.dtos.LeadDTO;
+import com.cinherited.gatewayservice.dtos.*;
 import com.cinherited.gatewayservice.security.MyUserDetailsService;
-import com.cinherited.gatewayservice.services.interfaces.ILeadsServices;
+import com.cinherited.gatewayservice.service.interfaces.ILeadsServices;
 import com.cinherited.gatewayservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +13,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
 import java.util.Optional;
 
 @RestController
@@ -66,6 +61,11 @@ public class GatewayController implements IGatewayController {
     @PostMapping("leads/new")
     LeadDTO createNewLead( @RequestBody LeadDTO leadDTO){
         return leadsServices.createNewLead(leadsAuthOk, leadDTO);
+    }
+
+    @PostMapping("leads/{leadId}/convert/{accountId}")
+    ConversionDTO convertLead(@PathVariable int leadId, @PathVariable Integer accountId, @RequestBody OpportunityDTO opportunityDTO){
+        return leadsServices.convertLead(leadsAuthOk, leadId, accountId, opportunityDTO);
     }
 
     @PutMapping("leads/update")
