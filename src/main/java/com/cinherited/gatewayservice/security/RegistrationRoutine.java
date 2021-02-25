@@ -4,9 +4,11 @@ import com.cinherited.gatewayservice.clients.OpportunityClient;
 import com.cinherited.gatewayservice.clients.StatsClient;
 import com.cinherited.gatewayservice.controllers.impl.OpportunityGatewayController;
 import com.cinherited.gatewayservice.controllers.impl.StatsGatewayController;
+import com.cinherited.gatewayservice.clients.*;
+import com.cinherited.gatewayservice.controllers.impl.AccountGatewayController;
+import com.cinherited.gatewayservice.controllers.impl.GatewayController;
+import com.cinherited.gatewayservice.controllers.impl.SalesRepGatewayController;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -19,18 +21,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class RegistrationRoutine {
-
+    @Autowired
+    LeadClient leadClient;
+    @Autowired
+    AccountClient accountClient;
+    @Autowired
+    SalesRepClient salesRepClient;
     @Autowired
     OpportunityClient opportunityClient;
-
     @Autowired
     StatsClient statsClient;
 
+    public static boolean isLeadRegistered = false;
+    public static boolean isAccountRegistered = false;
+    public static boolean isSalesRepRegistered = false;
     public static boolean isOpportunityRegistered = false;
     public static boolean isStatsRegistered = false;
+
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationRoutine.class);
 
@@ -39,7 +51,22 @@ public class RegistrationRoutine {
     private CircuitBreakerFactory circuitBreakerFactory = new Resilience4JCircuitBreakerFactory();
 
     @Scheduled(fixedRate = 10000)
-    public void checkRegistrationOpportunity() {
+    public void checkLeadRegistration() {
+        if (!isLeadRegistered) {
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("leads-service");
+            log.info("Trying to register with leads-service {}", dateFormat.format(new Date()));
+            AuthenticationRequest authenticationRequest = new AuthenticationRequest("gateway", "gateway");
+            ResponseEntity<?> responseEntity = circuitBreaker.run(() -> leadClient.createAuthenticationToken(authenticationRequest), throwable -> fallbackTransaction("leads-service"));
+            if (responseEntity != null) {
+                parseJWT(responseEntity);
+                isLeadRegistered = true;
+                log.info("Registered with leads-service auth token: {}", GatewayController.getLeadsAuthOk());
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void checkOpportunityRegistration() {
         if (!isOpportunityRegistered){
             CircuitBreaker circuitBreaker = circuitBreakerFactory.create("opportunity-service");
             log.info("Trying to register with opportunity-service {}", dateFormat.format(new Date()));
@@ -54,7 +81,37 @@ public class RegistrationRoutine {
     }
 
     @Scheduled(fixedRate = 10000)
-    public void checkRegistrationAccount() {
+    public void checkAccountRegistration() {
+        if (!isAccountRegistered) {
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("account-service");
+            log.info("Trying to register with account-service {}", dateFormat.format(new Date()));
+            AuthenticationRequest authenticationRequest = new AuthenticationRequest("gateway", "gateway");
+            ResponseEntity<?> responseEntity = circuitBreaker.run(() -> accountClient.createAuthenticationToken(authenticationRequest), throwable -> fallbackTransaction("account-service"));
+            if (responseEntity != null) {
+                parseAccountJWT(responseEntity);
+                isAccountRegistered = true;
+                log.info("Registered with account-service auth token: {}", AccountGatewayController.getAccountAuthOk());
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void checkSalesrepRegistration() {
+        if (!isSalesRepRegistered) {
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("salesrep-service");
+            log.info("Trying to register with salesrep-service {}", dateFormat.format(new Date()));
+            AuthenticationRequest authenticationRequest = new AuthenticationRequest("gateway", "gateway");
+            ResponseEntity<?> responseEntity = circuitBreaker.run(() -> salesRepClient.createAuthenticationToken(authenticationRequest), throwable -> fallbackTransaction("salesrep-service"));
+            if (responseEntity != null) {
+                parseSalesRepJWT(responseEntity);
+                isSalesRepRegistered = true;
+                log.info("Registered with salesrep-service auth token: {}", SalesRepGatewayController.getSalesrepAuthOk());
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void checkStatsRegistration() {
         if (!isStatsRegistered){
             CircuitBreaker circuitBreaker = circuitBreakerFactory.create("stats-service");
             log.info("Trying to register with stats-service {}", dateFormat.format(new Date()));
@@ -68,18 +125,35 @@ public class RegistrationRoutine {
         }
     }
 
+
+    private void parseJWT(ResponseEntity<?> responseEntity) {
+        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
+        GatewayController.setLeadsAuthOk(auth.substring(5, auth.length() - 1));
+        }
+
+    private void parseAccountJWT(ResponseEntity<?> responseEntity) {
+        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
+        AccountGatewayController.setAccountAuthOk(auth.substring(5, auth.length() - 1));
+        }
+
+    private void parseSalesRepJWT(ResponseEntity<?> responseEntity) {
+        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
+        SalesRepGatewayController.setSalesrepAuthOk(auth.substring(5, auth.length() - 1));
+        }
+
     private void parseJWTOpportunity(ResponseEntity<?> responseEntity) {
         String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
         OpportunityGatewayController.setOpportunityAuthOk(auth.substring(5, auth.length() - 1));
-    }
+        }
 
     private void parseJWTStats(ResponseEntity<?> responseEntity) {
         String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
         StatsGatewayController.setStatsAuthOk(auth.substring(5, auth.length() - 1));
-    }
+        }
 
     private ResponseEntity<?> fallbackTransaction(String serviceName) {
-        log.info( serviceName + " is not reachable {}", dateFormat.format(new Date()));
+        log.info(serviceName + " is not reachable {}", dateFormat.format(new Date()));
         return null;
-    }
+        }
 }
+
