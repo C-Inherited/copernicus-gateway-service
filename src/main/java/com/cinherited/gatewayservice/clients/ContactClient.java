@@ -15,19 +15,23 @@ public interface ContactClient {
 
     /** GET **/
     @GetMapping("/contact/{id}")
-    ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
+    public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** GET **/
     @GetMapping("/contact/")
-    List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader);
+    public List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** POST **/
     @PostMapping("/new/contact/")
-    ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
+    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     /** PUT **/
     @PutMapping("/contact/{id}")
-    ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
+    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
+
+    /** DELETE **/
+    @DeleteMapping("/contact/{id}")
+    public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @PostMapping("/contact/authenticate")
     ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest);

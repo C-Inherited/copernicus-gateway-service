@@ -1,7 +1,6 @@
 package com.cinherited.gatewayservice.controllers.impl;
 
 import com.cinherited.gatewayservice.clients.LeadClient;
-import com.cinherited.gatewayservice.clients.StatsClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IGatewayController;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import com.cinherited.gatewayservice.dtos.AuthenticationResponse;
@@ -47,8 +46,6 @@ public class GatewayController implements IGatewayController {
 
     private static String leadsAuthOk;
 
-    @Autowired
-    private ContactClient contactClient;
 
     @Override
     @GetMapping("/leads/all")
