@@ -2,17 +2,32 @@ package com.cinherited.gatewayservice.controllers.impl;
 
 import com.cinherited.gatewayservice.clients.StatsClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IStatsGatewayController;
+import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
+import com.cinherited.gatewayservice.security.MyUserDetailsService;
 import com.cinherited.gatewayservice.service.interfaces.IStatsGatewayService;
+import com.cinherited.gatewayservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/copernicus")
 public class StatsGatewayController implements IStatsGatewayController {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtUtil jwtTokenUtil;
+
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+
+    private static String statsAuthOk;
 
     @Autowired
     IStatsGatewayService statsGatewayService;
@@ -99,5 +114,12 @@ public class StatsGatewayController implements IStatsGatewayController {
         return statsGatewayService.medianQuantityByProduct();
     }
 
+    public static String getStatsAuthOk() {
+        return statsAuthOk;
+    }
+
+    public static void setStatsAuthOk(String statsAuthOk) {
+        StatsGatewayController.statsAuthOk = statsAuthOk;
+    }
 
 }

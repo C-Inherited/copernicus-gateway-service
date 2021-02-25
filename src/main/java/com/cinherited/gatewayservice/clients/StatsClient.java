@@ -1,13 +1,14 @@
 package com.cinherited.gatewayservice.clients;
 
+import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-@FeignClient("stats-client")
+@FeignClient("stats-service")
 public interface StatsClient {
 
     /** ACCOUNT STATS **/
@@ -60,4 +61,8 @@ public interface StatsClient {
 
     @GetMapping("/opportunity/median/quantity/by/product")
     List<Object[]> medianQuantityByProduct(@RequestHeader(value = "Authorization") String authorizationHeader);
+
+    @RequestMapping(value = "stats/authenticate", method = RequestMethod.POST)
+    ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest);
+
 }
