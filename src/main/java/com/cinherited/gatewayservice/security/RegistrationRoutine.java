@@ -34,6 +34,8 @@ public class RegistrationRoutine {
     StatsClient statsClient;
     @Autowired
     ContactClient contactClient;
+    @Autowired
+    ResultClient resultClient;
 
     public static boolean isLeadRegistered = false;
     public static boolean isAccountRegistered = false;
@@ -41,6 +43,7 @@ public class RegistrationRoutine {
     public static boolean isOpportunityRegistered = false;
     public static boolean isStatsRegistered = false;
     public static boolean isContactRegistered = false;
+    public static boolean isResultRegistered = false;
 
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationRoutine.class);
@@ -139,6 +142,23 @@ public class RegistrationRoutine {
         }
     }
 
+    @Scheduled(fixedRate = 10000)
+    public void checkResultRegistration() {
+        if (!isResultRegistered){
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("result-service");
+            log.info("Trying to register with result-service {}", dateFormat.format(new Date()));
+            AuthenticationRequest authenticationRequest = new AuthenticationRequest("gateway", "gateway");
+            ResponseEntity<?> responseEntity= circuitBreaker.run(() -> resultClient.createAuthenticationToken(authenticationRequest), throwable -> fallbackTransaction("result-service"));
+            if (responseEntity != null) {
+                parseJWTResult(responseEntity);
+                isResultRegistered = true;
+                log.info("Registered with contact-service auth token: {}", ResultGatewayController.getResultAuthOk());
+            }
+        }
+    }
+
+
+
 
     private void parseJWT(ResponseEntity<?> responseEntity) {
         String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
@@ -168,6 +188,11 @@ public class RegistrationRoutine {
     private void parseJWTContact(ResponseEntity<?> responseEntity) {
         String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
         ContactGatewayController.setContactAuthOk(auth.substring(5, auth.length() - 1));
+    }
+
+    private void parseJWTResult(ResponseEntity<?> responseEntity) {
+        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
+        ResultGatewayController.setResultAuthOk(auth.substring(5, auth.length() - 1));
     }
 
     private ResponseEntity<?> fallbackTransaction(String serviceName) {

@@ -1,12 +1,10 @@
 package com.cinherited.gatewayservice.controllers.impl;
 
-import com.cinherited.gatewayservice.clients.AccountClient;
 import com.cinherited.gatewayservice.clients.ContactClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IContactGatewayController;
 import com.cinherited.gatewayservice.dtos.ContactDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -22,33 +20,28 @@ public class ContactGatewayController implements IContactGatewayController {
     /** CONTACT **/
     /** GET **/
     @GetMapping("/contact/{id}")
-    public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader){
-        return contactClient.getContact(id, authorizationHeader);
+    public ContactDTO getContact(@PathVariable Integer id){
+        return contactClient.getContact(id, "Bearer " + getContactAuthOk());
     }
 
     /** GET **/
     @GetMapping("/contact/")
-    public List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader){
-        return contactClient.getAllContact(authorizationHeader);
+    public List<ContactDTO> getAllContact(){
+        return contactClient.getAllContact( "Bearer " + getContactAuthOk());
     }
 
     /** POST **/
     @PostMapping("/new/contact/")
-    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader){
-        return contactClient.postContact(contactDTO, authorizationHeader);
+    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO){
+        return contactClient.postContact(contactDTO,"Bearer " + getContactAuthOk());
     }
 
     /** PUT **/
     @PutMapping("/contact/{id}")
-    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader){
-        return contactClient.putContact(id, contactDTO, authorizationHeader);
+    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO){
+        return contactClient.putContact(id, contactDTO, "Bearer " + getContactAuthOk());
     }
 
-    /** DELETE **/
-    @DeleteMapping("/contact/{id}")
-    public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader){
-        contactClient.deleteContact(id, authorizationHeader);
-    }
 
     public static String getContactAuthOk() {
         return contactAuthOk;

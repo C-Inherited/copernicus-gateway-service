@@ -14,9 +14,8 @@ import java.util.Optional;
 public interface IContactGatewayController {
 
     /** CONTACT ROUTES **/
-    public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
-    public List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader);
-    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
-    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader);
-    public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
+    ContactDTO getContact(Integer id);
+    List<ContactDTO> getAllContact();
+    ContactDTO postContact(ContactDTO contactDTO);
+    ContactDTO putContact(Integer id,ContactDTO contactDTO);
 }
