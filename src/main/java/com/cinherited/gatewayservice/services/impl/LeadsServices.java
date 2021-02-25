@@ -23,26 +23,26 @@ public class LeadsServices implements ILeadsServices {
 
     @Override
     public List<LeadDTO> findAllBySalesRepId(String jwt, int salesRepId) {
-        return leadClient.findAllBySalesRepId(authenticationRequest, salesRepId);
+        return leadClient.findAllBySalesRepId( salesRepId, bearer + jwt);
     }
 
     @Override
     public LeadDTO findByLeadId(String jwt, int leadId) {
-        return leadClient.findByLeadId(authenticationRequest, leadId);
+        return leadClient.findByLeadId(leadId,bearer + jwt);
     }
 
     @Override
     public LeadDTO createNewLead(String jwt, LeadDTO leadDTO) {
-        return leadClient.createNewLead(authenticationRequest, leadDTO);
+        return leadClient.createNewLead(leadDTO,bearer + jwt);
     }
 
     @Override
     public LeadDTO updateLead(String jwt, LeadDTO leadDTO) {
-        return leadClient.updateLead(authenticationRequest, leadDTO);
+        return leadClient.updateLead(leadDTO, bearer + jwt);
     }
 
     @Override
     public int deleteLead(String jwt, int leadId) {
-        return leadClient.deleteLead(jwt, leadId);
+        return leadClient.deleteLead(leadId, bearer + jwt);
     }
 }
