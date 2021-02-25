@@ -1,8 +1,10 @@
 package com.cinherited.gatewayservice.controllers.impl;
 
+import com.cinherited.gatewayservice.clients.ContactClient;
 import com.cinherited.gatewayservice.clients.LeadClient;
 import com.cinherited.gatewayservice.clients.StatsClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IGatewayController;
+import com.cinherited.gatewayservice.dtos.ContactDTO;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import com.cinherited.gatewayservice.dtos.AuthenticationResponse;
 import com.cinherited.gatewayservice.dtos.LeadDTO;
@@ -10,6 +12,7 @@ import com.cinherited.gatewayservice.security.MyUserDetailsService;
 import com.cinherited.gatewayservice.services.interfaces.ILeadsServices;
 import com.cinherited.gatewayservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,6 +50,8 @@ public class GatewayController implements IGatewayController {
 
     private static String leadsAuthOk;
 
+    @Autowired
+    private ContactClient contactClient;
 
     @Override
     @GetMapping("/leads/all")
@@ -94,4 +100,37 @@ public class GatewayController implements IGatewayController {
     public static void setLeadsAuthOk(String theAuthOk) {
         leadsAuthOk = theAuthOk;
     }
+
+    /** CONTACT **/
+    /** GET **/
+    @GetMapping("/contact/{id}")
+    public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader){
+       return contactClient.getContact(id, authorizationHeader);
+    }
+
+    /** GET **/
+    @GetMapping("/contact/")
+    public List<ContactDTO> getAllContact(@RequestHeader(value = "Authorization") String authorizationHeader){
+        return contactClient.getAllContact(authorizationHeader);
+    }
+
+    /** POST **/
+    @PostMapping("/new/contact/")
+    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader){
+        return contactClient.postContact(contactDTO, authorizationHeader);
+    }
+
+    /** PUT **/
+    @PutMapping("/contact/{id}")
+    public ContactDTO putContact(@PathVariable Integer id,@RequestBody @Valid ContactDTO contactDTO, @RequestHeader(value = "Authorization") String authorizationHeader){
+        return contactClient.putContact(id, contactDTO, authorizationHeader);
+    }
+
+    /** DELETE **/
+    @DeleteMapping("/contact/{id}")
+    public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader){
+        contactClient.deleteContact(id, authorizationHeader);
+    }
+
+
 }
