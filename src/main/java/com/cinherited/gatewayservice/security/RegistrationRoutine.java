@@ -2,12 +2,8 @@ package com.cinherited.gatewayservice.security;
 
 import com.cinherited.gatewayservice.clients.OpportunityClient;
 import com.cinherited.gatewayservice.clients.StatsClient;
-import com.cinherited.gatewayservice.controllers.impl.OpportunityGatewayController;
-import com.cinherited.gatewayservice.controllers.impl.StatsGatewayController;
+import com.cinherited.gatewayservice.controllers.impl.*;
 import com.cinherited.gatewayservice.clients.*;
-import com.cinherited.gatewayservice.controllers.impl.AccountGatewayController;
-import com.cinherited.gatewayservice.controllers.impl.GatewayController;
-import com.cinherited.gatewayservice.controllers.impl.SalesRepGatewayController;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
@@ -36,12 +32,15 @@ public class RegistrationRoutine {
     OpportunityClient opportunityClient;
     @Autowired
     StatsClient statsClient;
+    @Autowired
+    ContactClient contactClient;
 
     public static boolean isLeadRegistered = false;
     public static boolean isAccountRegistered = false;
     public static boolean isSalesRepRegistered = false;
     public static boolean isOpportunityRegistered = false;
     public static boolean isStatsRegistered = false;
+    public static boolean isContactRegistered = false;
 
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationRoutine.class);
@@ -125,6 +124,21 @@ public class RegistrationRoutine {
         }
     }
 
+    @Scheduled(fixedRate = 10000)
+    public void checkContactRegistration() {
+        if (!isContactRegistered){
+            CircuitBreaker circuitBreaker = circuitBreakerFactory.create("contact-service");
+            log.info("Trying to register with contact-service {}", dateFormat.format(new Date()));
+            AuthenticationRequest authenticationRequest = new AuthenticationRequest("gateway", "gateway");
+            ResponseEntity<?> responseEntity= circuitBreaker.run(() -> contactClient.createAuthenticationToken(authenticationRequest), throwable -> fallbackTransaction("contact-service"));
+            if (responseEntity != null) {
+                parseJWTContact(responseEntity);
+                isContactRegistered = true;
+                log.info("Registered with contact-service auth token: {}", ContactGatewayController.getContactAuthOk());
+            }
+        }
+    }
+
 
     private void parseJWT(ResponseEntity<?> responseEntity) {
         String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
@@ -149,7 +163,12 @@ public class RegistrationRoutine {
     private void parseJWTStats(ResponseEntity<?> responseEntity) {
         String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
         StatsGatewayController.setStatsAuthOk(auth.substring(5, auth.length() - 1));
-        }
+    }
+
+    private void parseJWTContact(ResponseEntity<?> responseEntity) {
+        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
+        ContactGatewayController.setContactAuthOk(auth.substring(5, auth.length() - 1));
+    }
 
     private ResponseEntity<?> fallbackTransaction(String serviceName) {
         log.info(serviceName + " is not reachable {}", dateFormat.format(new Date()));

@@ -11,9 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-public interface IGatewayController {
-
-    List<LeadDTO> findAllLeads();
+public interface IContactGatewayController {
 
     /** CONTACT ROUTES **/
     public ContactDTO getContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);

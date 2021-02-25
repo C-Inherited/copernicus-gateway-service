@@ -1,8 +1,10 @@
 package com.cinherited.gatewayservice.clients;
 
+import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import com.cinherited.gatewayservice.dtos.ContactDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,4 +32,7 @@ public interface ContactClient {
     /** DELETE **/
     @DeleteMapping("/contact/{id}")
     public void deleteContact(@PathVariable Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
+
+    @PostMapping("/contact/authenticate")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest);
 }

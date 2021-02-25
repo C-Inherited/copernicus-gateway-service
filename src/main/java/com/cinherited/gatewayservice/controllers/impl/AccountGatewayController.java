@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequestMapping("/copernicus")
 public class AccountGatewayController {
 
     @Autowired
