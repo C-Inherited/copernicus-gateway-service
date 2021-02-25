@@ -6,6 +6,7 @@ import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import com.cinherited.gatewayservice.dtos.AuthenticationResponse;
 import com.cinherited.gatewayservice.dtos.LeadDTO;
 import com.cinherited.gatewayservice.security.MyUserDetailsService;
+import com.cinherited.gatewayservice.services.interfaces.ILeadsServices;
 import com.cinherited.gatewayservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,9 @@ public class GatewayController implements IGatewayController {
     @Autowired
     private LeadClient leadClient;
 
+    @Autowired
+    ILeadsServices leadsServices;
+
     private static String leadsAuthOk;
 
 
@@ -41,18 +45,19 @@ public class GatewayController implements IGatewayController {
     @GetMapping("/leads/all")
     public List<LeadDTO> findAllLeads() {
 //        authOk = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmb28iLCJleHAiOjE2MTQwNTY3MzEsImlhdCI6MTYxNDAyMDczMX0.3nP6Vo3WmeuO7X15tdkGL6ACl0UZHuefC4F0dZJScnc";
-        return leadClient.findAll("Bearer " + leadsAuthOk);
+//        return
+        return leadsServices.findAll("Bearer " + leadsAuthOk);
     }
 
-    @RequestMapping(value = "/leads/authenticate", method = RequestMethod.POST)
-    public void authWithLeadsService(){
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest("foo", "foo");
-        ResponseEntity<?> responseEntity=  leadClient.createAuthenticationToken(authenticationRequest);
-        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
-        leadsAuthOk = auth.substring(5, auth.length() - 1);
-        System.out.println(auth);
-
-    }
+//    @RequestMapping(value = "/leads/authenticate", method = RequestMethod.POST)
+//    public void authWithLeadsService(){
+//        AuthenticationRequest authenticationRequest = new AuthenticationRequest("foo", "foo");
+//        ResponseEntity<?> responseEntity=  leadClient.createAuthenticationToken(authenticationRequest);
+//        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
+//        leadsAuthOk = auth.substring(5, auth.length() - 1);
+//        System.out.println(auth);
+//
+//    }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
