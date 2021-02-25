@@ -37,7 +37,7 @@ public class RegistrationRoutine {
             if (!isLeadRegistered){
                 CircuitBreaker circuitBreaker = circuitBreakerFactory.create("leads-service");
                 log.info("Trying to register with leads-service {}", dateFormat.format(new Date()));
-                AuthenticationRequest authenticationRequest = new AuthenticationRequest("foo", "foo");
+                AuthenticationRequest authenticationRequest = new AuthenticationRequest("gateway", "gateway");
                 ResponseEntity<?> responseEntity= circuitBreaker.run(() -> leadClient.createAuthenticationToken(authenticationRequest), throwable -> fallbackTransaction("leads-service"));
                 if (responseEntity != null) {
                     parseJWT(responseEntity);
