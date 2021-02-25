@@ -1,21 +1,33 @@
 package com.cinherited.gatewayservice.dtos;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 public class ContactDTO {
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Min(value = 1, message = "Minimum value for opportunity id is 1")
     private Integer id;
+    @NotNull(message = "Name is required")
     private String name;
+    @NotNull(message = "Phone number is required")
     private String phoneNumber;
+    @NotNull(message = "Email is required")
     private String email;
+    @NotNull(message = "Company name is required")
     private String companyName;
+    @Min(value = 1, message = "Minimum value for account id is 1")
+    @NotNull
     private Integer accountId;
 
     public ContactDTO() {
     }
 
-
+    public ContactDTO(@NotNull(message = "Name is required") String name, @NotNull(message = "Phone number is required") String phoneNumber, @NotNull(message = "Email is required") String email, @NotNull(message = "Company name is required") String companyName, @Min(value = 1, message = "Minimum value for account id is 1") @NotNull Integer accountId) {
+        setName(name);
+        setPhoneNumber(phoneNumber);
+        setEmail(email);
+        setCompanyName(companyName);
+        setAccountId(accountId);
+    }
 
     public String getName() {
         return name;
@@ -57,7 +69,6 @@ public class ContactDTO {
         this.accountId = accountId;
     }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Integer getId() {
         return id;
     }

@@ -1,6 +1,6 @@
 package com.cinherited.gatewayservice.controllers.impl;
 
-
+import com.cinherited.gatewayservice.clients.LeadClient;
 import com.cinherited.gatewayservice.clients.StatsClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IGatewayController;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
@@ -10,6 +10,7 @@ import com.cinherited.gatewayservice.security.MyUserDetailsService;
 import com.cinherited.gatewayservice.services.interfaces.ILeadsServices;
 import com.cinherited.gatewayservice.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,10 +40,15 @@ public class GatewayController implements IGatewayController {
     private MyUserDetailsService userDetailsService;
 
     @Autowired
+    private LeadClient leadClient;
+
+    @Autowired
     ILeadsServices leadsServices;
 
     private static String leadsAuthOk;
 
+    @Autowired
+    private ContactClient contactClient;
 
     @Override
     @GetMapping("/leads/all")
