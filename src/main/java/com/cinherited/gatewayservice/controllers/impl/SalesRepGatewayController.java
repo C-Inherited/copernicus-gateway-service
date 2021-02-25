@@ -13,31 +13,40 @@ import javax.validation.Valid;
 @RestController
 public class SalesRepGatewayController {
 
-
     @Autowired
     private SalesRepClient salesRepClient;
+
+    private static String salesrepAuthOk;
 
     @GetMapping("/salesrep/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CompleteSalesRepDTO getSalesRepById(@PathVariable(name = "id") Integer id) {
-        return salesRepClient.getSalesRepById(id);
+        return salesRepClient.getSalesRepById(id, "Bearer " + salesrepAuthOk);
     }
 
     @PostMapping("/salesrep")
     @ResponseStatus(HttpStatus.CREATED)
     public SalesRepDTO saveSalesRep(@RequestBody @Valid SalesRepNameDTO name) {
-        return salesRepClient.saveSalesRep(name);
+        return salesRepClient.saveSalesRep(name, "Bearer " + salesrepAuthOk);
     }
 
     @PutMapping("/salesrep/{id}")
     @ResponseStatus(HttpStatus.CREATED)
     public SalesRepDTO updateSalesRep(@RequestBody @Valid SalesRepNameDTO name, @PathVariable(name = "id") Integer id) {
-        return salesRepClient.updateSalesRep(name, id);
+        return salesRepClient.updateSalesRep(name, id, "Bearer " + salesrepAuthOk);
     }
 
     @DeleteMapping("/salesrep/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteSalesRep(@PathVariable(name = "id") Integer id) {
-        salesRepClient.deleteSalesRep(id);
+        salesRepClient.deleteSalesRep(id, "Bearer " + salesrepAuthOk);
+    }
+
+    public static String getSalesrepAuthOk() {
+        return salesrepAuthOk;
+    }
+
+    public static void setSalesrepAuthOk(String salesrepAuthOk) {
+        SalesRepGatewayController.salesrepAuthOk = salesrepAuthOk;
     }
 }

@@ -15,31 +15,43 @@ public class AccountGatewayController {
     @Autowired
     private AccountClient accountClient;
 
+    private static String accountAuthOk;
+
     @GetMapping("/account/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public AccountDTO getAccount(@PathVariable(name = "id") Integer id){
-        return accountClient.getAccount(id);
+    public AccountDTO getAccount(@PathVariable(name = "id") Integer id) {
+        return accountClient.getAccount(id, "Bearer " + accountAuthOk);
     }
+
     @GetMapping("/accounts")
     @ResponseStatus(HttpStatus.OK)
-    public List<AccountDTO> getAllAccounts(){
-        return accountClient.getAllAccounts();
+    public List<AccountDTO> getAllAccounts() {
+        return accountClient.getAllAccounts("Bearer " + accountAuthOk);
     }
 
     @PostMapping("/account")
     @ResponseStatus(HttpStatus.CREATED)
-    public AccountDTO saveAccount(@RequestBody @Valid AccountDTO accountDTO){
-        return accountClient.saveAccount(accountDTO);
-    }
-    @PutMapping("/account/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public AccountDTO updateAccount(@RequestBody @Valid AccountDTO accountDTO, @PathVariable (name = "id") Integer id){
-        return accountClient.updateAccount(accountDTO, id);
-    }
-    @DeleteMapping("/account/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteAccount(@PathVariable (name = "id") Integer id){
-        accountClient.deleteAccount(id);
+    public AccountDTO saveAccount(@RequestBody @Valid AccountDTO accountDTO) {
+        return accountClient.saveAccount(accountDTO, "Bearer " + accountAuthOk);
     }
 
+    @PutMapping("/account/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public AccountDTO updateAccount(@RequestBody @Valid AccountDTO accountDTO, @PathVariable(name = "id") Integer id) {
+        return accountClient.updateAccount(accountDTO, id, "Bearer " + accountAuthOk);
+    }
+
+    @DeleteMapping("/account/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteAccount(@PathVariable(name = "id") Integer id) {
+        accountClient.deleteAccount(id, "Bearer " + accountAuthOk);
+    }
+
+    public static String getAccountAuthOk() {
+        return accountAuthOk;
+    }
+
+    public static void setAccountAuthOk(String accountAuthOk) {
+        AccountGatewayController.accountAuthOk = accountAuthOk;
+    }
 }
