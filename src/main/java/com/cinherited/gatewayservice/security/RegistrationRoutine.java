@@ -68,7 +68,7 @@ public class RegistrationRoutine {
             if (responseEntity != null) {
                 parseAccountJWT(responseEntity);
                 isAccountRegistered = true;
-                log.info("Registered with account-service auth token: {}", GatewayController.getLeadsAuthOk());
+                log.info("Registered with account-service auth token: {}", AccountGatewayController.getAccountAuthOk());
             }
         }
     }
@@ -83,7 +83,7 @@ public class RegistrationRoutine {
             if (responseEntity != null) {
                 parseSalesRepJWT(responseEntity);
                 isSalesRepRegistered = true;
-                log.info("Registered with salesrep-service auth token: {}", GatewayController.getLeadsAuthOk());
+                log.info("Registered with salesrep-service auth token: {}", SalesRepGatewayController.getSalesrepAuthOk());
             }
         }
     }
