@@ -1,6 +1,6 @@
 package com.cinherited.gatewayservice.controllers.impl;
 
-import com.cinherited.gatewayservice.clients.LeadClient;
+
 import com.cinherited.gatewayservice.clients.StatsClient;
 import com.cinherited.gatewayservice.controllers.interfaces.IGatewayController;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Objects;
+
 import java.util.Optional;
 
 @RestController
@@ -39,9 +39,6 @@ public class GatewayController implements IGatewayController {
     private MyUserDetailsService userDetailsService;
 
     @Autowired
-    private LeadClient leadClient;
-
-    @Autowired
     ILeadsServices leadsServices;
 
     private static String leadsAuthOk;
@@ -50,20 +47,34 @@ public class GatewayController implements IGatewayController {
     @Override
     @GetMapping("/leads/all")
     public List<LeadDTO> findAllLeads() {
-//        authOk = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmb28iLCJleHAiOjE2MTQwNTY3MzEsImlhdCI6MTYxNDAyMDczMX0.3nP6Vo3WmeuO7X15tdkGL6ACl0UZHuefC4F0dZJScnc";
-//        return
-        return leadsServices.findAll("Bearer " + leadsAuthOk);
+        return leadsServices.findAll(leadsAuthOk);
     }
 
-//    @RequestMapping(value = "/leads/authenticate", method = RequestMethod.POST)
-//    public void authWithLeadsService(){
-//        AuthenticationRequest authenticationRequest = new AuthenticationRequest("foo", "foo");
-//        ResponseEntity<?> responseEntity=  leadClient.createAuthenticationToken(authenticationRequest);
-//        String auth = Objects.requireNonNull(responseEntity.getBody()).toString();
-//        leadsAuthOk = auth.substring(5, auth.length() - 1);
-//        System.out.println(auth);
-//
-//    }
+    @GetMapping("/leads/all/{salesRepId}")
+    List<LeadDTO> findAllBySalesRepId(@PathVariable int salesRepId){
+        return leadsServices.findAllBySalesRepId(leadsAuthOk, salesRepId);
+    }
+
+    @GetMapping("/leads/{leadId}")
+    LeadDTO findByLeadId(@PathVariable int leadId){
+        return leadsServices.findByLeadId(leadsAuthOk, leadId);
+    }
+
+    @PostMapping("leads/new")
+    LeadDTO createNewLead( @RequestBody LeadDTO leadDTO){
+        return leadsServices.createNewLead(leadsAuthOk, leadDTO);
+    }
+
+    @PutMapping("leads/update")
+    LeadDTO updateLead(@RequestBody LeadDTO leadDTO){
+        return leadsServices.updateLead(leadsAuthOk, leadDTO);
+    }
+
+    @DeleteMapping("leads/delete/{leadId}")
+    int deleteLead(@PathVariable int leadId){
+        return leadsServices.deleteLead(leadsAuthOk, leadId);
+    }
+
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
