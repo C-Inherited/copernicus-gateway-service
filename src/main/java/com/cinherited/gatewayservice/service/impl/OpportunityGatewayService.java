@@ -1,24 +1,22 @@
 package com.cinherited.gatewayservice.service.impl;
 
 import com.cinherited.gatewayservice.clients.OpportunityClient;
-import com.cinherited.gatewayservice.clients.StatsClient;
-import com.cinherited.gatewayservice.controllers.impl.GatewayController;
 import com.cinherited.gatewayservice.controllers.impl.OpportunityGatewayController;
 import com.cinherited.gatewayservice.dtos.OpportunityDTO;
+import com.cinherited.gatewayservice.service.interfaces.IOpportunityGatewayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class OpportunityGatewayService {
+public class OpportunityGatewayService implements IOpportunityGatewayService {
 
     @Autowired
     OpportunityClient opportunityClient;

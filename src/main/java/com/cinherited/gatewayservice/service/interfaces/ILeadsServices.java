@@ -1,6 +1,8 @@
 package com.cinherited.gatewayservice.service.interfaces;
 
-import com.cinherited.gatewayservice.dtos.*;
+import com.cinherited.gatewayservice.dtos.AccountDTO;
+import com.cinherited.gatewayservice.dtos.LeadDTO;
+import com.cinherited.gatewayservice.dtos.OpportunityDTO;
 
 import java.util.List;
 

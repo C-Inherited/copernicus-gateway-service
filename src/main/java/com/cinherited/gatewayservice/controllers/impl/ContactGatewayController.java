@@ -5,6 +5,7 @@ import com.cinherited.gatewayservice.controllers.interfaces.IContactGatewayContr
 import com.cinherited.gatewayservice.dtos.ContactDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.List;
 

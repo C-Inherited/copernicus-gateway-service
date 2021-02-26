@@ -1,7 +1,6 @@
 package com.cinherited.gatewayservice.service.impl;
 
 import com.cinherited.gatewayservice.clients.StatsClient;
-import com.cinherited.gatewayservice.controllers.impl.GatewayController;
 import com.cinherited.gatewayservice.controllers.impl.StatsGatewayController;
 import com.cinherited.gatewayservice.service.interfaces.IStatsGatewayService;
 import org.springframework.beans.factory.annotation.Autowired;

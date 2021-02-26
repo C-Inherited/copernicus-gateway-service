@@ -1,7 +1,5 @@
 package com.cinherited.gatewayservice.service.interfaces;
 
-import org.springframework.web.bind.annotation.GetMapping;
-
 import java.util.List;
 import java.util.Optional;
 

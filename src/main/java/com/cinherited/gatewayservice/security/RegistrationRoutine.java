@@ -1,10 +1,10 @@
 package com.cinherited.gatewayservice.security;
 
-import com.cinherited.gatewayservice.clients.OpportunityClient;
-import com.cinherited.gatewayservice.clients.StatsClient;
-import com.cinherited.gatewayservice.controllers.impl.*;
 import com.cinherited.gatewayservice.clients.*;
+import com.cinherited.gatewayservice.controllers.impl.*;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class RegistrationRoutine {

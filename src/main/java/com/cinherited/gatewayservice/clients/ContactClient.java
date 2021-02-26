@@ -3,7 +3,6 @@ package com.cinherited.gatewayservice.clients;
 import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
 import com.cinherited.gatewayservice.dtos.ContactDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -5,7 +5,10 @@ import com.cinherited.gatewayservice.controllers.impl.AccountGatewayController;
 import com.cinherited.gatewayservice.controllers.impl.ContactGatewayController;
 import com.cinherited.gatewayservice.controllers.impl.OpportunityGatewayController;
 import com.cinherited.gatewayservice.controllers.impl.SalesRepGatewayController;
-import com.cinherited.gatewayservice.dtos.*;
+import com.cinherited.gatewayservice.dtos.AccountDTO;
+import com.cinherited.gatewayservice.dtos.ContactDTO;
+import com.cinherited.gatewayservice.dtos.LeadDTO;
+import com.cinherited.gatewayservice.dtos.OpportunityDTO;
 import com.cinherited.gatewayservice.service.interfaces.ILeadsServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
@@ -16,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LeadsServices implements ILeadsServices {

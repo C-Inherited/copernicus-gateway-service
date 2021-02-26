@@ -2,7 +2,6 @@ package com.cinherited.gatewayservice.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
