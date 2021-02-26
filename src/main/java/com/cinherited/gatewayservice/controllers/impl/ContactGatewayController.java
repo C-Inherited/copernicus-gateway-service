@@ -30,11 +30,6 @@ public class ContactGatewayController implements IContactGatewayController {
         return contactClient.getAllContact( "Bearer " + getContactAuthOk());
     }
 
-    /** POST **/
-    @PostMapping("/new/contact/")
-    public ContactDTO postContact(@RequestBody @Valid ContactDTO contactDTO){
-        return contactClient.postContact(contactDTO,"Bearer " + getContactAuthOk());
-    }
 
     /** PUT **/
     @PutMapping("/contact/{id}")

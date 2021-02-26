@@ -1,13 +1,19 @@
 package com.cinherited.gatewayservice.service.impl;
 
-import com.cinherited.gatewayservice.clients.AccountClient;
-import com.cinherited.gatewayservice.clients.ContactClient;
-import com.cinherited.gatewayservice.clients.LeadClient;
-import com.cinherited.gatewayservice.clients.OpportunityClient;
+import com.cinherited.gatewayservice.clients.*;
+import com.cinherited.gatewayservice.controllers.impl.AccountGatewayController;
+import com.cinherited.gatewayservice.controllers.impl.ContactGatewayController;
+import com.cinherited.gatewayservice.controllers.impl.OpportunityGatewayController;
+import com.cinherited.gatewayservice.controllers.impl.SalesRepGatewayController;
 import com.cinherited.gatewayservice.dtos.*;
 import com.cinherited.gatewayservice.service.interfaces.ILeadsServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +29,8 @@ public class LeadsServices implements ILeadsServices {
     private AccountClient accountClient;
     @Autowired
     private OpportunityClient opportunityClient;
+    @Autowired
+    private SalesRepClient salesRepClient;
     @Override
     public List<LeadDTO> findAll(String leadsAuthOk) {
         return leadClient.findAll(bearer + leadsAuthOk);
@@ -30,43 +38,77 @@ public class LeadsServices implements ILeadsServices {
 
     private String bearer = "Bearer ";
 
+    private final CircuitBreakerFactory circuitBreakerFactory = new Resilience4JCircuitBreakerFactory();
+    private CircuitBreaker leadCircuit = circuitBreakerFactory.create("lead-service");
+    private CircuitBreaker contactCircuit = circuitBreakerFactory.create("contact-service");
+    private CircuitBreaker opportunityCircuit = circuitBreakerFactory.create("opportunity-service");
+    private CircuitBreaker accountCircuit = circuitBreakerFactory.create("account-service");
+    private CircuitBreaker salesrepCircuit = circuitBreakerFactory.create("salesrep-service");
+
+
     @Override
     public List<LeadDTO> findAllBySalesRepId(String jwt, int salesRepId) {
-        return leadClient.findAllBySalesRepId( salesRepId, bearer + jwt);
+        salesrepCircuit.run(() -> salesRepClient.getSalesRepById(salesRepId, bearer + SalesRepGatewayController.getSalesrepAuthOk()),
+                throwable -> leadFallback("Salesrep"));
+        return leadCircuit.run(() -> leadClient.findAllBySalesRepId( salesRepId, bearer + jwt), throwable -> (List<LeadDTO>) leadFallback("Lead"));
     }
 
     @Override
     public LeadDTO findByLeadId(String jwt, int leadId) {
-        return leadClient.findByLeadId(leadId,bearer + jwt);
+        return leadCircuit.run(() -> leadClient.findByLeadId(leadId,bearer + jwt), throwable -> (LeadDTO) leadFallback("Lead"));
     }
 
     @Override
     public LeadDTO createNewLead(String jwt, LeadDTO leadDTO) {
-        return leadClient.createNewLead(leadDTO,bearer + jwt);
+        salesrepCircuit.run(() -> salesRepClient.getSalesRepById(leadDTO.getLeadSalesRepId(), bearer + SalesRepGatewayController.getSalesrepAuthOk()),
+                throwable -> leadFallback("Salesrep"));
+        return leadCircuit.run(() -> leadClient.createNewLead(leadDTO,bearer + jwt), throwable -> (LeadDTO) leadFallback("Lead"));
     }
 
     @Override
     public LeadDTO updateLead(String jwt, LeadDTO leadDTO) {
-        return leadClient.updateLead(leadDTO, bearer + jwt);
+        salesrepCircuit.run(() -> salesRepClient.getSalesRepById(leadDTO.getLeadSalesRepId(), bearer + SalesRepGatewayController.getSalesrepAuthOk()),
+                throwable -> leadFallback("Salesrep"));
+        return leadCircuit.run(() -> leadClient.updateLead(leadDTO,bearer + jwt), throwable -> (LeadDTO) leadFallback("Lead"));
     }
 
     @Override
     public int deleteLead(String jwt, int leadId) {
-        return leadClient.deleteLead(leadId, bearer + jwt);
+        return leadCircuit.run(() -> leadClient.deleteLead(leadId,bearer + jwt), throwable -> (int) leadFallback("Lead"));
     }
 
     @Override
-    public ConversionDTO convertLead(String jwt, int leadId, Integer accountId, OpportunityDTO opportunityDTO) {
-        LeadDTO leadDTO = findByLeadId(jwt, leadId);
-        AccountDTO accountDTO = accountClient.getAccount(accountId, jwt);
+    public AccountDTO convertLead(String jwt, int leadId, Integer accountId, OpportunityDTO opportunityDTO) {
+        LeadDTO leadDTO = leadCircuit.run(() -> leadClient.findByLeadId(leadId,bearer + jwt),
+                throwable -> (LeadDTO) leadFallback("Lead"));
+
+        AccountDTO accountDTO = accountCircuit.run(() -> accountClient.getAccount(accountId, bearer + AccountGatewayController.getAccountAuthOk()),
+                throwable -> (AccountDTO) leadFallback("Account"));
 
         ContactDTO contactDTO = new ContactDTO(leadDTO.getLeadName(), leadDTO.getLeadPhone(), leadDTO.getLeadEmail(), leadDTO.getLeadCompanyName(), accountId);
-        contactDTO = contactClient.postContact(contactDTO, jwt);
+        ContactDTO contactDTOValidated = contactCircuit.run(() -> contactClient.postContact(contactDTO, bearer+ContactGatewayController.getContactAuthOk()),
+                throwable -> (ContactDTO) leadFallback("Contact"));
 
-        opportunityDTO = opportunityClient.postOpportunity(opportunityDTO, jwt);
+        opportunityDTO.setAccountId(accountDTO.getId());
+        System.out.println(contactDTOValidated.getId());
+        opportunityDTO.setContactId(contactDTOValidated.getId());
 
-        leadClient.deleteLead(leadId, jwt);
+        opportunityDTO = opportunityClient.postOpportunity(opportunityDTO, bearer+OpportunityGatewayController.getOpportunityAuthOk());
 
-        return new ConversionDTO(accountDTO, contactDTO, opportunityDTO);
+        leadClient.deleteLead(leadId, bearer+ jwt);
+
+        List<ContactDTO> accountContacts = accountDTO.getContacts();
+        accountContacts.add(contactDTOValidated);
+        accountDTO.setContacts(accountContacts);
+        List<OpportunityDTO> opportunityContacts = accountDTO.getOpportunities();
+        opportunityContacts.add(opportunityDTO);
+        accountDTO.setOpportunities(opportunityContacts);
+
+
+        return accountDTO;
+    }
+
+    private Object leadFallback(String service){
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, service+" service is not available right now");
     }
 }

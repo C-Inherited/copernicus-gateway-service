@@ -64,7 +64,7 @@ public class GatewayController implements IGatewayController {
     }
 
     @PostMapping("leads/{leadId}/convert/{accountId}")
-    ConversionDTO convertLead(@PathVariable int leadId, @PathVariable Integer accountId, @RequestBody OpportunityDTO opportunityDTO){
+    AccountDTO convertLead(@PathVariable int leadId, @PathVariable Integer accountId, @RequestBody OpportunityDTO opportunityDTO){
         return leadsServices.convertLead(leadsAuthOk, leadId, accountId, opportunityDTO);
     }
 

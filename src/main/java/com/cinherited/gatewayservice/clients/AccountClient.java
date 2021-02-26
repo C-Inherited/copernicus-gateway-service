@@ -14,7 +14,6 @@ import java.util.List;
 public interface AccountClient {
 
     @GetMapping("/account/{id}")
-    @ResponseStatus(HttpStatus.OK)
     public AccountDTO getAccount(@PathVariable(name = "id") Integer id, @RequestHeader(value = "Authorization") String authorizationHeader);
 
     @GetMapping("/accounts")

@@ -1,9 +1,6 @@
 package com.cinherited.gatewayservice.service.interfaces;
 
-import com.cinherited.gatewayservice.dtos.AuthenticationRequest;
-import com.cinherited.gatewayservice.dtos.ConversionDTO;
-import com.cinherited.gatewayservice.dtos.LeadDTO;
-import com.cinherited.gatewayservice.dtos.OpportunityDTO;
+import com.cinherited.gatewayservice.dtos.*;
 
 import java.util.List;
 
@@ -20,5 +17,5 @@ public interface ILeadsServices {
 
     int deleteLead(String jwt, int leadId);
 
-    ConversionDTO convertLead(String jwt, int leadId, Integer accountId, OpportunityDTO opportunityDTO);
+    AccountDTO convertLead(String jwt, int leadId, Integer accountId, OpportunityDTO opportunityDTO);
 }

@@ -39,11 +39,6 @@ public class OpportunityGatewayController {
         return opportunityGatewayService.getAllOpportunities();
     }
 
-    @PostMapping("/opportunity")
-    public OpportunityDTO postOpportunity(@RequestBody OpportunityDTO opportunityDTO) {
-        return opportunityGatewayService.postOpportunity(opportunityDTO);
-    }
-
     @PutMapping("/opportunity/{id}")
     public OpportunityDTO putOpportunity(@PathVariable Integer id, @RequestBody OpportunityDTO opportunityDTO) {
         return opportunityGatewayService.putOpportunity(id, opportunityDTO);

@@ -35,10 +35,6 @@ public class OpportunityGatewayService {
         return opportunityCircuit.run(() -> opportunityClient.getAllOpportunities("Bearer "+ OpportunityGatewayController.getOpportunityAuthOk()), throwable -> (List<OpportunityDTO>) opportunityFallback());
     }
 
-    public OpportunityDTO postOpportunity(OpportunityDTO opportunityDTO) {
-        return opportunityCircuit.run(() -> opportunityClient.postOpportunity(opportunityDTO, "Bearer "+ OpportunityGatewayController.getOpportunityAuthOk()), throwable -> (OpportunityDTO) opportunityFallback());
-    }
-
     public OpportunityDTO putOpportunity(Integer id, OpportunityDTO opportunityDTO) {
         return opportunityCircuit.run(() -> opportunityClient.putOpportunity(id, opportunityDTO, "Bearer "+ OpportunityGatewayController.getOpportunityAuthOk()), throwable -> (OpportunityDTO) opportunityFallback());
     }
@@ -48,7 +44,7 @@ public class OpportunityGatewayService {
     }
 
     private Object opportunityFallback(){
-        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Stats service is not available right now");
+        throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "Opportunity service is not available right now");
     }
 
 }
